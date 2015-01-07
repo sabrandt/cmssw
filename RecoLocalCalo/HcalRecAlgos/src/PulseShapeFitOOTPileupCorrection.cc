@@ -450,6 +450,8 @@ void PulseShapeFitOOTPileupCorrection::fit(int iFit,float &timevalfit,float &cha
    if(std::abs(timevalfit)>std::abs(timeval2fit)) {// if timeval1fit and timeval2fit are differnt, choose the one which is closer to zero
      timevalfit=timeval2fit;
      chargevalfit=chargeval2fit;
+   } else if(std::abs(timeval2fit)>std::abs(timevalfit)) {// if timeval1fit and timeval2fit are differnt, choose the one which is closer to zero
+     // do nothing for this case, correct time & charge has already been set
    } else if(timevalfit==timeval2fit) { // if the two times are the same, then for charge we just sum the two  
      timevalfit=(timevalfit+timeval2fit)/2;
      chargevalfit=chargevalfit+chargeval2fit;
