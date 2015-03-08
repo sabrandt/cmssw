@@ -374,7 +374,7 @@ namespace HcalSimpleRecAlgoImpl {
     // S. Brandt - Feb 19th : Adding Section for HLT
     // Turn on HLT here with puCorrMethod = 3
     if ( puCorrMethod == 3 || puCorrMethod == 4){
-      std::cout << "Doing HLT" << std::endl;
+      //std::cout << "Doing HLT" << std::endl;
       //std::cout << "PU Corection is ... " << puCorrMethod << std::endl;
       //std::cout << "Doing HLT..." << std::endl;
       std::vector<double> hltCorrOutput;
@@ -406,7 +406,7 @@ namespace HcalSimpleRecAlgoImpl {
         if( hltCorrOutput.size() > 0 ){
           //time = hltCorrOutput[1]; ampl = hltCorrOutput[0];
           time = hltCorrOutput.at(1); ampl = hltCorrOutput.at(0);
-          std::cout << time << " " << ampl << std::endl;
+        //  std::cout << time << " " << ampl << std::endl;
         }
       //} else {time = -999; ampl = 0;}
     }
