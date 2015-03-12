@@ -373,7 +373,7 @@ namespace HcalSimpleRecAlgoImpl {
     
     // S. Brandt - Feb 19th : Adding Section for HLT
     // Turn on HLT here with puCorrMethod = 3
-    if ( puCorrMethod == 3 || puCorrMethod == 4){
+    if ( puCorrMethod == 3 /*|| puCorrMethod == 4*/){
       //std::cout << "Doing HLT" << std::endl;
       //std::cout << "PU Corection is ... " << puCorrMethod << std::endl;
       //std::cout << "Doing HLT..." << std::endl;
@@ -387,10 +387,10 @@ namespace HcalSimpleRecAlgoImpl {
       if(puCorrMethod == 3) {
         iNegStrategy = 2;
         //std::cout << "Greg's Negative Corrections..." << std::endl;
-      } else if(puCorrMethod == 4) {
+      } /*else if(puCorrMethod == 4) {
         iNegStrategy = 1;
         //std::cout << "No Corrections..." << std::endl;
-      }// no corr
+      }// no corr*/
        //std::cout << iNegStrategy << std::endl; 
       hltOOTpuCorr->Init((HcalTimeSlew::ParaSource)2, HcalTimeSlew::Medium, (HLTv2::NegStrategy)iNegStrategy, *hltPedSub);
       

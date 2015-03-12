@@ -23,10 +23,10 @@ void HLTv2::apply(const CaloSamples & cs, const std::vector<int> & capidvec, con
   std::vector<double> corrCharge;
   std::vector<double> inputCharge;
   std::vector<double> inputPedestal;
-   const unsigned int cssize = cs.size();
-// initialize arrays to be zero
-   //double tstrig = 0; // in fC
-  // double tsTOTen = 0; // in GeV
+  const unsigned int cssize = cs.size();
+  // initialize arrays to be zero
+ // double tstrig = 0; // in fC
+ // double tsTOTen = 0; // in GeV
   double gainCorr = 0;
   for(unsigned int ip=0; ip<cssize; ++ip){
   //  std::cout << "assigning vectors " << std::endl;
@@ -39,7 +39,8 @@ void HLTv2::apply(const CaloSamples & cs, const std::vector<int> & capidvec, con
     inputCharge.push_back(charge);
     inputPedestal.push_back(ped);
     //corrCharge.push_back(charge - ped); // Using Pedestal-subtracted values
-  }
+  }                   
+ 
   //std::cout << "at ped sub" << std::endl; 
   fPedestalSubFxn_.Calculate(inputCharge, inputPedestal, corrCharge);
   
@@ -54,8 +55,8 @@ void HLTv2::apply(const CaloSamples & cs, const std::vector<int> & capidvec, con
   getLandauFrac(-tsShift3,-tsShift3+25,i3);
   Float_t n3=0;
   getLandauFrac(-tsShift3+25,-tsShift3+50,n3);
-//   Float_t nn3=0;
-//   getLandauFrac(-tsShift3+50,-tsShift3+75,nn3);
+  Float_t nn3=0;
+  getLandauFrac(-tsShift3+50,-tsShift3+75,nn3);
 
   Float_t i4=0;
   getLandauFrac(-tsShift4,-tsShift4+25,i4);
@@ -69,8 +70,7 @@ void HLTv2::apply(const CaloSamples & cs, const std::vector<int> & capidvec, con
 
   Float_t ch3=corrCharge[3]/i3;
   Float_t ch4=(i3*corrCharge[4]-n3*corrCharge[3])/(i3*i4);
-  Float_t ch5=(n3*n4*corrCharge[3]-i3*n4*corrCharge[4]+i3*i4*corrCharge[5])/(i3*i4*i5);
-  // Float_t ch5=(n3*n4*corrCharge[3]-i4*nn3*corrCharge[3]-i3*n4*corrCharge[4]+i3*i4*corrCharge[5])/(i3*i4*i5); 
+  Float_t ch5=(n3*n4*corrCharge[3]-i4*nn3*corrCharge[3]-i3*n4*corrCharge[4]+i3*i4*corrCharge[5])/(i3*i4*i5);
 
   if (ch3<-3 && fNegStrat==HLTv2::ReqPos) {
     ch3=-3;
@@ -97,6 +97,7 @@ void HLTv2::apply(const CaloSamples & cs, const std::vector<int> & capidvec, con
 	getLandauFrac(-invG,-invG+25,iG);
 	ch4=(corrCharge[4]-ch3*n3)/(iG);
 	ch5=-3;
+	tsShift4=invG;
       }
     }
   }
@@ -111,7 +112,6 @@ void HLTv2::apply(const CaloSamples & cs, const std::vector<int> & capidvec, con
     ch5=0;
   }
   
-
   // Print out 
   HLTOutput.clear();
   HLTOutput.push_back(ch4*gainCorr);// amplitude 
