@@ -81,14 +81,17 @@ public:
 
   void setpuCorrMethod(int method){ 
     puCorrMethod_ = method; if( puCorrMethod_ == 2 ) psFitOOTpuCorr_ = std::auto_ptr<PulseShapeFitOOTPileupCorrection>(new PulseShapeFitOOTPileupCorrection());
-    if( puCorrMethod_ == 3) hltOOTpuCorr_ = std::auto_ptr<HcalDeterministicFit>(new HcalDeterministicFit());
+    if( puCorrMethod_ == 3) {
+       hltOOTpuCorr_ = std::auto_ptr<HcalDeterministicFit>(new HcalDeterministicFit());
+       pedSubFxn_= std::auto_ptr<PedestalSub>(new PedestalSub());
+    }
   }
   void setpuCorrParams(bool   iPedestalConstraint, bool iTimeConstraint,bool iAddPulseJitter,bool iUnConstrainedFit,bool iApplyTimeSlew,
 		       double iTS4Min, double iTS4Max, double iPulseJitter,double iTimeMean,double iTimeSig,double iPedMean,double iPedSig,
 		       double iNoise,double iTMin,double iTMax,
 		       double its3Chi2,double its4Chi2,double its345Chi2,double iChargeThreshold, int iFitTimes); 
   
-   void setMeth3Params(int iPedSubMethod, double iPedSubThreshold, bool iTimeSlewIsData);
+   void setMeth3Params(int iPedSubMethod, float iPedSubThreshold, bool iTimeSlewIsData);
 //   void 
                
  // std::auto_ptr<PedestalSub> pedSubFxn_= std::auto_ptr<PedestalSub>(new PedestalSub());

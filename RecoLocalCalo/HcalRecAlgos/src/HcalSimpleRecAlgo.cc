@@ -69,7 +69,7 @@ void HcalSimpleRecAlgo::setpuCorrParams(bool   iPedestalConstraint, bool iTimeCo
 //  psFitOOTpuCorr_->setPulseShapeTemplate(theHcalPulseShapes_.getShape(shapeNum));
 }
 
-void HcalSimpleRecAlgo::setMeth3Params(int iPedSubMethod, double iPedSubThreshold, bool iTimeSlewIsData) { 
+void HcalSimpleRecAlgo::setMeth3Params(int iPedSubMethod, float iPedSubThreshold, bool iTimeSlewIsData) { 
   
   int iTimeSlewSource =1;
   if(!iTimeSlewIsData) iTimeSlewSource = 2;
