@@ -190,12 +190,25 @@ void PFMETAlgorithmMVA::setInput(const std::vector<reco::PUSubMETCandInfo>& lept
   var_["pileUpCorrected_U"]     = hsMinusNeutralPUMEt_data.met;
   var_["pileUpCorrected_UPhi"]  = hsMinusNeutralPUMEt_data.phi;
 
-  var_["jet1_pT"]               = jet1P4.pt();
-  var_["jet1_eta"]              = jet1P4.eta();
-  var_["jet1_Phi"]              = jet1P4.phi();
-  var_["jet2_pT"]               = jet2P4.pt();
-  var_["jet2_eta"]              = jet2P4.eta();
-  var_["jet2_Phi"]              = jet2P4.phi();
+  if(jet1P4.pt() > 30.0){
+    var_["jet1_pT"]               = jet1P4.pt();
+    var_["jet1_eta"]              = jet1P4.eta();
+    var_["jet1_Phi"]              = jet1P4.phi();
+  } else {
+    var_["jet1_pT"]               = -999.0;
+    var_["jet1_eta"]              = -999.0;
+    var_["jet1_Phi"]              = -999.0;
+  }
+  
+  if(jet2P4.pt() > 30.0){
+    var_["jet2_pT"]               = jet2P4.pt();
+    var_["jet2_eta"]              = jet2P4.eta();
+    var_["jet2_Phi"]              = jet2P4.phi();
+  } else {
+    var_["jet2_pT"]               = -999.0;
+    var_["jet2_eta"]              = -999.0;
+    var_["jet2_Phi"]              = -999.0;
+  }
 
   var_["numJetsPtGt30"]         = utils_.numJetsAboveThreshold(jets_cleaned, 30.);
   var_["nJets"]                 = jets_cleaned.size();
