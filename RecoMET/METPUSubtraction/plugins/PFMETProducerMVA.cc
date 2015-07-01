@@ -174,7 +174,7 @@ PFMETProducerMVA::computeLeptonInfo(const std::vector<edm::EDGetTokenT<reco::Can
       }
       if(pMatch) continue;
       reco::PUSubMETCandInfo pLeptonInfo;
-      if(lepton1->pt() < 10 ) continue;
+     // if(lepton1->pt() < 10 ) continue;
   //    std::cout << "lepton pt " << lepton1->pt() << std::endl;
       pLeptonInfo.setP4( lepton1->p4() );
       pLeptonInfo.setChargedEnFrac( chargedEnFrac(&(*lepton1),pfCandidates_view,hardScatterVertex) );

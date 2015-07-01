@@ -14,10 +14,11 @@ from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(20) )
+process.pfMVAMEt.minCorrJetPt = cms.double(30)
 
 process.source = cms.Source("PoolSource",
                             fileNames = cms.untracked.vstring(
-"root://eoscms//eos/cms/store/relval/CMSSW_7_4_3_patch1/RelValZMM_13/GEN-SIM-RECO/PU25ns_MCRUN2_74_V9_unsch-v1/00000/6E2F96B6-E606-E511-B850-0025905A60CA.root"
+"root://xrootd-cms.infn.it//store/mc/RunIISpring15DR74/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/AODSIM/Asympt50ns_MCRUN2_74_V9A-v2/00000/0033A97B-8707-E511-9D3B-008CFA1980B8.root"
         ),
                             skipEvents = cms.untracked.uint32(0)                        
 )
