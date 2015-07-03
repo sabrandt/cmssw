@@ -25,20 +25,20 @@ isoelectrons = cms.EDFilter(
             cut = cms.string(
             "abs(eta) < 2.5 && pt > 9.5"                               +
         #    "&& gsfTrack.trackerExpectedHitsInner.numberOfHits == 0"   + #comment by steph
-#            "&& (pfIsolationVariables.chargedHadronIso+pfIsolationVariables.neutralHadronIso)/et     < 0.3"  +
+   #         "&& (pfIsolationR03.sumChargedHadronPt+pfIsolationR03.sumNeutralHadronEt+pfIsolationR03.sumPhotonEt)/pt < 0.3"  +
             "&& (isolationVariables03.tkSumPt)/et              < 0.2"  +
             "&& ((abs(eta) < 1.4442  "                                 +
-            "&& abs(deltaEtaSuperClusterTrackAtVtx)            < 0.007"+
-            "&& abs(deltaPhiSuperClusterTrackAtVtx)            < 0.8"  +
+            "&& abs(deltaEtaSuperClusterTrackAtVtx)            < 0.008925"+
+            "&& abs(deltaPhiSuperClusterTrackAtVtx)            < 0.05"  +
             "&& sigmaIetaIeta                                  < 0.01" +
             "&& hcalOverEcal                                   < 0.15" +
-            "&& abs(1./superCluster.energy - 1./p)             < 0.05)"+
+            "&& abs(1./superCluster.energy - 1./p)             < 0.091942)"+
             "|| (abs(eta)  > 1.566 "+
             "&& abs(deltaEtaSuperClusterTrackAtVtx)            < 0.009"+
             "&& abs(deltaPhiSuperClusterTrackAtVtx)            < 0.10" +
-            "&& sigmaIetaIeta                                  < 0.03" +
+            "&& sigmaIetaIeta                                  < 0.030135" +
             "&& hcalOverEcal                                   < 0.10" +
-            "&& abs(1./superCluster.energy - 1./p)             < 0.05))" 
+            "&& abs(1./superCluster.energy - 1./p)             < 0.100683))" 
             ),
         filter = cms.bool(False)
         )
