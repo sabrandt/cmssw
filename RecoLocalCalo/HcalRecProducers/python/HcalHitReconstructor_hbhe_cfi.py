@@ -130,6 +130,9 @@ hbheprereco = cms.EDProducer(
     ts345chi2             = cms.double(100.), #chi2 (not used)
     chargeMax             = cms.double(6.),    #Charge cut (fC) for uncstrianed Fit 
     fitTimes              = cms.int32(1),       # -1 means no constraint on number of fits per channel
+    # energy range to prune down the rechit collection by removing very low-energy hits produced by the fit
+    rhEnCutMin            = cms.double(0.0), # lower bound (exclusive), should probably always be 0
+    rhEnCutMax            = cms.double(0.001), # upper bound, set to 1MeV
     # add some of the Method 3 parameters here
     pedestalSubtractionType = cms.int32(1),
     pedestalUpperLimit      = cms.double(2.7),

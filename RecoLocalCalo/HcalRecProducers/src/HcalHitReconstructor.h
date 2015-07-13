@@ -114,6 +114,8 @@ class HcalTopology;
       int cntprtCorrMethod_;
       bool first_;
       std::string corrName_,cat_;
+      float rechitEnergyCutMin_;
+      float rechitEnergyCutMax_;
     };
 
 #endif

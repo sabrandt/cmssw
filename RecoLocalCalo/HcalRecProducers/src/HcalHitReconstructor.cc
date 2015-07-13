@@ -49,7 +49,9 @@ HcalHitReconstructor::HcalHitReconstructor(edm::ParameterSet const& conf):
   paramTS(0),
   puCorrMethod_(conf.existsAs<int>("puCorrMethod") ? conf.getParameter<int>("puCorrMethod") : 0),
   cntprtCorrMethod_(0),
-  first_(true)
+  first_(true),
+  rechitEnergyCutMin_(0),
+  rechitEnergyCutMax_(0)
 
 {
   // register for data access
@@ -246,7 +248,7 @@ HcalHitReconstructor::HcalHitReconstructor(edm::ParameterSet const& conf):
       setPileupCorrection_ = 0;
 
   reco_.setpuCorrMethod(puCorrMethod_);
-  if(puCorrMethod_ == 2) { 
+  if(puCorrMethod_ == 2) {
     reco_.setpuCorrParams(
 			  conf.getParameter<bool>  ("applyPedConstraint"),
 			  conf.getParameter<bool>  ("applyTimeConstraint"),
@@ -267,8 +269,10 @@ HcalHitReconstructor::HcalHitReconstructor(edm::ParameterSet const& conf):
 			  conf.getParameter<double>("ts4chi2"),
 			  conf.getParameter<double>("ts345chi2"),
 			  conf.getParameter<double>("chargeMax"), //For the unconstrained Fit
-                          conf.getParameter<int>   ("fitTimes")
+              conf.getParameter<int>   ("fitTimes")
 			  );
+    rechitEnergyCutMin_ = conf.getParameter<double>("rhEnCutMin");
+    rechitEnergyCutMax_ = conf.getParameter<double>("rhEnCutMax");
   }
   if(puCorrMethod_ == 3) {
     reco_.setMeth3Params(
@@ -278,7 +282,6 @@ HcalHitReconstructor::HcalHitReconstructor(edm::ParameterSet const& conf):
               conf.getParameter<std::vector<double> >("timeSlewPars")
               );
   }
-
 }
 
 void HcalHitReconstructor::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
@@ -518,8 +521,11 @@ void HcalHitReconstructor::produce(edm::Event& e, const edm::EventSetup& eventSe
 	const HcalQIEShape* shape = conditions->getHcalShape (channelCoder);
 	HcalCoderDb coder (*channelCoder, *shape);
 
-	rec->push_back(reco_.reconstruct(*i,first,toadd,coder,calibrations));
 
+    HBHERecHit tempRecHit = reco_.reconstruct(*i,first,toadd,coder,calibrations);
+
+    if(tempRecHit.energy() > rechitEnergyCutMin_ && tempRecHit.energy() < rechitEnergyCutMax_)continue;//adding
+    rec->push_back(tempRecHit);
 	// Fill first auxiliary word
 	unsigned int auxflag=0;
         int fTS = firstAuxTS_;
@@ -570,14 +576,13 @@ void HcalHitReconstructor::produce(edm::Event& e, const edm::EventSetup& eventSe
               }
 	    
 	  } // if (set HSCPFlags_ && |ieta|<16)
-      } // loop over HBHE digis
+    } // loop over HBHE digis
 
 
       if (setNoiseFlags_) hbheFlagSetter_->SetFlagsFromRecHits(&(*topo),*rec);
       if (setHSCPFlags_)  hbheHSCPFlagSetter_->hbheSetTimeFlagsFromDigi(rec.get(), HBDigis, RecHitIndex);
       // return result
       e.put(rec);
-
       //  HO ------------------------------------------------------------------
     } else if (subdet_==HcalOuter) {
       edm::Handle<HODigiCollection> digi;
