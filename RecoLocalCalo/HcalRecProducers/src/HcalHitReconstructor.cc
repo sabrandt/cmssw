@@ -607,61 +607,61 @@ void HcalHitReconstructor::produce(edm::Event& e, const edm::EventSetup& eventSe
       }
 
       for (i=digi->begin(); i!=digi->end(); i++) {
-	HcalDetId cell = i->id();
-	DetId detcell=(DetId)cell;
+        HcalDetId cell = i->id();
+        DetId detcell=(DetId)cell;
         // firstSample & samplesToAdd
         if(tsFromDB_ || recoParamsFromDB_) {
           const HcalRecoParam* param_ts = paramTS->getValues(detcell.rawId());
-	  if(tsFromDB_) {
-	    firstSample_  = param_ts->firstSample();
-	    samplesToAdd_ = param_ts->samplesToAdd();
-	  }
+          if(tsFromDB_) {
+            firstSample_  = param_ts->firstSample();
+            samplesToAdd_ = param_ts->samplesToAdd();
+          }
           if(recoParamsFromDB_) {
-             bool correctForTimeslew=param_ts->correctForTimeslew();
-             bool correctForPhaseContainment= param_ts->correctForPhaseContainment();
-             float phaseNS=param_ts->correctionPhaseNS();
-             useLeakCorrection_= param_ts->useLeakCorrection();
-             correctTiming_ = param_ts->correctTiming();
-             firstAuxTS_ = param_ts->firstAuxTS();
-             int pileupCleaningID = param_ts->pileupCleaningID();
-             reco_.setRecoParams(correctForTimeslew,correctForPhaseContainment,useLeakCorrection_,pileupCleaningID,phaseNS);
+            bool correctForTimeslew=param_ts->correctForTimeslew();
+            bool correctForPhaseContainment= param_ts->correctForPhaseContainment();
+            float phaseNS=param_ts->correctionPhaseNS();
+            useLeakCorrection_= param_ts->useLeakCorrection();
+            correctTiming_ = param_ts->correctTiming();
+            firstAuxTS_ = param_ts->firstAuxTS();
+            int pileupCleaningID = param_ts->pileupCleaningID();
+            reco_.setRecoParams(correctForTimeslew,correctForPhaseContainment,useLeakCorrection_,pileupCleaningID,phaseNS);
           }
         }
 
         int first = firstSample_;
         int toadd = samplesToAdd_;
 
-	// check on cells to be ignored and dropped: (rof,20.Feb.09)
-	const HcalChannelStatus* mydigistatus=myqual->getValues(detcell.rawId());
-	if (mySeverity->dropChannel(mydigistatus->getValue() ) ) continue;
-	if (dropZSmarkedPassed_)
-	  if (i->zsMarkAndPass()) continue;
+        // check on cells to be ignored and dropped: (rof,20.Feb.09)
+        const HcalChannelStatus* mydigistatus=myqual->getValues(detcell.rawId());
+        if (mySeverity->dropChannel(mydigistatus->getValue() ) ) continue;
+        if (dropZSmarkedPassed_)
+          if (i->zsMarkAndPass()) continue;
 
-	const HcalCalibrations& calibrations=conditions->getHcalCalibrations(cell);
-	const HcalQIECoder* channelCoder = conditions->getHcalCoder (cell);
-	const HcalQIEShape* shape = conditions->getHcalShape (channelCoder);
-	HcalCoderDb coder (*channelCoder, *shape);
+        const HcalCalibrations& calibrations=conditions->getHcalCalibrations(cell);
+        const HcalQIECoder* channelCoder = conditions->getHcalCoder (cell);
+        const HcalQIEShape* shape = conditions->getHcalShape (channelCoder);
+        HcalCoderDb coder (*channelCoder, *shape);
 
-	rec->push_back(reco_.reconstruct(*i,first,toadd,coder,calibrations));
+        rec->push_back(reco_.reconstruct(*i,first,toadd,coder,calibrations));
 
-	// Set auxiliary flag
-	int auxflag=0;
-        int fTS = firstAuxTS_;
-	if (fTS<0) fTS=0; //silly protection against negative time slice values
-	for (int xx=fTS; xx<fTS+4 && xx<i->size();++xx)
-	  auxflag+=(i->sample(xx).adc())<<(7*(xx-fTS)); // store the time slices in the first 28 bits of aux, a set of 4 7-bit adc values
-	// bits 28 and 29 are reserved for capid of the first time slice saved in aux
-	auxflag+=((i->sample(fTS).capid())<<28);
-	(rec->back()).setAux(auxflag);
-	(rec->back()).setFlags(0);
-	// Fill Presample ADC flag
-	if (fTS>0)
-	  (rec->back()).setFlagField((i->sample(fTS-1).adc()), HcalCaloFlagLabels::PresampleADC,7);
+        // Set auxiliary flag
+        int auxflag=0;
+            int fTS = firstAuxTS_;
+        if (fTS<0) fTS=0; //silly protection against negative time slice values
+        for (int xx=fTS; xx<fTS+4 && xx<i->size();++xx)
+          auxflag+=(i->sample(xx).adc())<<(7*(xx-fTS)); // store the time slices in the first 28 bits of aux, a set of 4 7-bit adc values
+        // bits 28 and 29 are reserved for capid of the first time slice saved in aux
+        auxflag+=((i->sample(fTS).capid())<<28);
+        (rec->back()).setAux(auxflag);
+        (rec->back()).setFlags(0);
+        // Fill Presample ADC flag
+        if (fTS>0)
+          (rec->back()).setFlagField((i->sample(fTS-1).adc()), HcalCaloFlagLabels::PresampleADC,7);
 
-	if (setSaturationFlags_)
-	  saturationFlagSetter_->setSaturationFlag(rec->back(),*i);
-	if (correctTiming_)
-	  HcalTimingCorrector::Correct(rec->back(), *i, favorite_capid);
+        if (setSaturationFlags_)
+          saturationFlagSetter_->setSaturationFlag(rec->back(),*i);
+        if (correctTiming_)
+          HcalTimingCorrector::Correct(rec->back(), *i, favorite_capid);
       }
       // return result
       e.put(rec);    
