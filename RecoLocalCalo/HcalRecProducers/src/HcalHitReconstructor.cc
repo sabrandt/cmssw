@@ -524,7 +524,7 @@ void HcalHitReconstructor::produce(edm::Event& e, const edm::EventSetup& eventSe
 
     HBHERecHit tempRecHit = reco_.reconstruct(*i,first,toadd,coder,calibrations);
 
-    if(tempRecHit.energy() > rechitEnergyCutMin_ && tempRecHit.energy() < rechitEnergyCutMax_)continue;//adding
+    if(tempRecHit.energy() >= rechitEnergyCutMin_ && tempRecHit.energy() < rechitEnergyCutMax_)continue;//adding
     rec->push_back(tempRecHit);
 	// Fill first auxiliary word
 	unsigned int auxflag=0;
