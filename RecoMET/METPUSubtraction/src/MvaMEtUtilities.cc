@@ -173,6 +173,7 @@ MvaMEtUtilities::computeCandSum( int compKey, double dZmax, int dZflag,
 
     //leptons
     if( compKey==MvaMEtUtilities::kLeptons) {
+    //  std::cout << "lepton  pt = " << object->p4().pt() << std::endl;
       if(iCharged) pFrac = object->chargedEnFrac();
     }
 

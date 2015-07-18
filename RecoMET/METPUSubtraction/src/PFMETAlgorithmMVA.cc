@@ -202,6 +202,42 @@ void PFMETAlgorithmMVA::setInput(const std::vector<reco::PUSubMETCandInfo>& lept
   var_["nJets"]                 = jets_cleaned.size();
   var_["nPV"]                   = vertices.size();
   
+//   std::cout << "particleFlow_U " << var_["particleFlow_U"]  << std::endl;
+//   std::cout << "particleFlow_SumET " << var_["particleFlow_SumET"]  << std::endl;
+//   std::cout << "particleFlow_UPhi " << var_["particleFlow_UPhi"]  << std::endl;
+//     
+//   std::cout << "track_SumET " << var_["track_SumET"]   << std::endl;
+//   std::cout << "track_U " << var_["track_U"]  << std::endl;
+//   std::cout << "track_UPhi " << var_["track_UPhi"]  << std::endl;
+//   
+//   std::cout << "noPileUp_SumET " << var_["noPileUp_SumET"]  << std::endl;
+//   std::cout << "noPileUp_U " << var_["noPileUp_U"]  << std::endl;
+//   std::cout << "noPileUp_UPhi " << var_["noPileUp_UPhi"]  << std::endl;
+// 
+//   std::cout << "pileUp_SumET " << var_["pileUp_SumET"]  << std::endl;
+//   std::cout << "pileUp_MET " << var_["pileUp_MET"]  << std::endl;
+//   std::cout << "pileUp_METPhi " << var_["pileUp_METPhi"]  << std::endl;
+//   
+//   std::cout << "pileUpCorrected_SumET " << var_["pileUpCorrected_SumET"]  << std::endl;
+//   std::cout << "pileUpCorrected_U " << var_["pileUpCorrected_U"]  << std::endl;
+//   std::cout << "pileUpCorrected_UPhi " << var_["pileUpCorrected_UPhi"]  << std::endl;
+//   
+//   std::cout << "jet1_pT " << var_["jet1_pT"]  << std::endl;
+//   std::cout << "jet1_eta " << var_["jet1_eta"]  << std::endl;
+//   std::cout << "jet1_Phi " << var_["jet1_Phi"]  << std::endl;
+//   
+//   std::cout << "jet2_pT " << var_["jet2_pT"]  << std::endl;
+//   std::cout << "jet2_eta " << var_["jet2_eta"]  << std::endl;
+//   std::cout << "jet2_Phi " << var_["jet2_Phi"]  << std::endl;
+//   
+//   std::cout << "numJetsPtGt30 " << var_["numJetsPtGt30"]  << std::endl;
+//   std::cout << "nJets " << var_["nJets"]  << std::endl;
+//   std::cout << "nPV " << var_["nPV"]  << std::endl;
+  
+  
+  
+  
+  
 }
 
 //-------------------------------------------------------------------------------
