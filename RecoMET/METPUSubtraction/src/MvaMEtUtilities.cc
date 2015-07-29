@@ -67,12 +67,16 @@ bool MvaMEtUtilities::passesMVA(const reco::Candidate::LorentzVector& jetP4, dou
 
 reco::Candidate::LorentzVector MvaMEtUtilities::leadJetP4(const std::vector<reco::PUSubMETCandInfo>& jets) 
 {
-  return jetP4(jets, 0);
+  int leadJetIndex = jets.size()-1;
+  return jetP4(jets, leadJetIndex);
+ // return jetP4(jets, 0);
 }
 
 reco::Candidate::LorentzVector MvaMEtUtilities::subleadJetP4(const std::vector<reco::PUSubMETCandInfo>& jets) 
 {
-  return jetP4(jets, 1);
+  int leadJetIndex = jets.size()-2;
+  return jetP4(jets, leadJetIndex);
+  //return jetP4(jets, 1);
 }
 
 reco::Candidate::LorentzVector MvaMEtUtilities::jetP4(const std::vector<reco::PUSubMETCandInfo>& jets, unsigned idx) 
@@ -169,6 +173,7 @@ MvaMEtUtilities::computeCandSum( int compKey, double dZmax, int dZflag,
 
     //leptons
     if( compKey==MvaMEtUtilities::kLeptons) {
+    //  std::cout << "lepton  pt = " << object->p4().pt() << std::endl;
       if(iCharged) pFrac = object->chargedEnFrac();
     }
 
