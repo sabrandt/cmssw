@@ -4,44 +4,52 @@ import FWCore.ParameterSet.Config as cms
 isomuons = cms.EDFilter(
     "MuonSelector",
     src = cms.InputTag('muons'),
-    cut = cms.string(    "(isTrackerMuon) && abs(eta) < 2.5 && pt > 9.5"+#17. "+
-                         "&& isPFMuon"+
-                         "&& globalTrack.isNonnull"+
-                         "&& innerTrack.hitPattern.numberOfValidPixelHits > 0"+
-                         "&& innerTrack.normalizedChi2 < 10"+
-                         "&& numberOfMatches > 0"+
-                         "&& innerTrack.hitPattern.numberOfValidTrackerHits>5"+
-                         "&& globalTrack.hitPattern.numberOfValidHits>0"+
-                         "&& (pfIsolationR03.sumChargedHadronPt+pfIsolationR03.sumNeutralHadronEt+pfIsolationR03.sumPhotonEt)/pt < 0.3"+
-                         "&& abs(innerTrack().dxy)<2.0"
-                         ),
-    filter = cms.bool(False)
+    cut = cms.string(
+        "isGlobalMuon && isTrackerMuon && abs(eta) < 2.5 && pt > 9.5 " +
+        "&& globalTrack.normalizedChi2 < 10 "+
+        "&& globalTrack.hitPattern.numberofValidMuonHits > 0 "+
+        "&& numberOfMatchedStations > 1 "+
+        "&& abs(muonBestTrack.dxy(vertex.position)) < 0.2 "+
+        "&& abs(muonBestTrack.dz(vertex.position)) < 0.5 "+
+        "&& innerTrack.hitPattern.numberOfValidPixelHits > 0 "+
+        "&& innerTrack.trackerLayersWithMeasurement > 5 "+
+        "&& (pfIsolationR04.sumChargedHadronPt+pfIsolationR04.sumNeutralHadronEt+pfIsolationR04.sumPhotonEt)/pt < 0.3"
+        ),
+    filter = cms.bool(False)     
     )
 
+# compared to w/z selection:
+# missing conversion veto,
+# isolation requirement not the same
+# missing hits requirement
 
 isoelectrons = cms.EDFilter(
     "GsfElectronSelector",
-            src = cms.InputTag('gedGsfElectrons'),
-            cut = cms.string(
-            "abs(eta) < 2.5 && pt > 9.5"                               +
-        #    "&& gsfTrack.trackerExpectedHitsInner.numberOfHits == 0"   + #comment by steph
-   #         "&& (pfIsolationR03.sumChargedHadronPt+pfIsolationR03.sumNeutralHadronEt+pfIsolationR03.sumPhotonEt)/pt < 0.3"  +
-            "&& (isolationVariables03.tkSumPt)/et              < 0.2"  +
-            "&& ((abs(eta) < 1.4442  "                                 +
-            "&& abs(deltaEtaSuperClusterTrackAtVtx)            < 0.008925"+
-            "&& abs(deltaPhiSuperClusterTrackAtVtx)            < 0.05"  +
-            "&& sigmaIetaIeta                                  < 0.01" +
-            "&& hcalOverEcal                                   < 0.15" +
-            "&& abs(1./superCluster.energy - 1./p)             < 0.091942)"+
-            "|| (abs(eta)  > 1.566 "+
-            "&& abs(deltaEtaSuperClusterTrackAtVtx)            < 0.009"+
-            "&& abs(deltaPhiSuperClusterTrackAtVtx)            < 0.10" +
-            "&& sigmaIetaIeta                                  < 0.030135" +
-            "&& hcalOverEcal                                   < 0.10" +
-            "&& abs(1./superCluster.energy - 1./p)             < 0.100683))" 
-            ),
-        filter = cms.bool(False)
-        )
+    src = cms.InputTag('gedGsfElectrons'),
+    cut = cms.string(
+        "abs(eta) < 2.5 && pt > 9.5 && ecalDrivenSeed" +
+        "&& (isolationVariables03.tkSumPt)/et < 0.3 " +
+        #barrel
+        "&& ((abs(eta) < 1.4442 " +
+        "&& sigmaIetaIeta                                  < 0.009996 " +
+        "&& abs(deltaPhiSuperClusterTrackAtVtx)            < 0.035973 " +
+        "&& abs(deltaEtaSuperClusterTrackAtVtx)            < 0.008925 " +
+        "&& hcalOverEcal                                   < 0.050537 " +
+        "&& abs(1./superCluster.energy - 1./p)             < 0.091942 " +
+        "&& abs(dxy(vertex.position))                      < 0.012235 " + 
+        "&& abs(dz(vertex.position))                       < 0.042020) " + 
+        #endcap
+        "|| (abs(eta)  > 1.566 "+
+        "&& sigmaIetaIeta                                  < 0.030135 " +
+        "&& abs(deltaPhiSuperClusterTrackAtVtx)            < 0.067879 " +
+        "&& abs(deltaEtaSuperClusterTrackAtVtx)            < 0.007429 " +
+        "&& hcalOverEcal                                   < 0.067778 " +
+        "&& abs(1./superCluster.energy - 1./p)             < 0.098919 " +
+        "&& abs(dxy(vertex.position))                      < 0.027984 " + 
+        "&& abs(dz(vertex.position))                       < 0.133431))"
+        ),
+    filter = cms.bool(False)
+    )
 
 from RecoJets.Configuration.RecoPFJets_cff import kt6PFJets as dummy
 kt6PFJetsForRhoComputationVoronoiMet = dummy.clone(
