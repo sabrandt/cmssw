@@ -4,30 +4,25 @@ import FWCore.ParameterSet.Config as cms
 isomuons = cms.EDFilter(
     "MuonSelector",
     src = cms.InputTag('muons'),
-    cut = cms.string(
-        "isGlobalMuon && isTrackerMuon && abs(eta) < 2.5 && pt > 9.5 " +
-        "&& globalTrack.normalizedChi2 < 10 "+
-        "&& globalTrack.hitPattern.numberofValidMuonHits > 0 "+
-        "&& numberOfMatchedStations > 1 "+
-        "&& abs(muonBestTrack.dxy(vertex.position)) < 0.2 "+
-        "&& abs(muonBestTrack.dz(vertex.position)) < 0.5 "+
-        "&& innerTrack.hitPattern.numberOfValidPixelHits > 0 "+
-        "&& innerTrack.trackerLayersWithMeasurement > 5 "+
-        "&& (pfIsolationR04.sumChargedHadronPt+pfIsolationR04.sumNeutralHadronEt+pfIsolationR04.sumPhotonEt)/pt < 0.3"
-        ),
-    filter = cms.bool(False)     
+    cut = cms.string(    "(isTrackerMuon) && abs(eta) < 2.5 && pt > 9.5"+#17. "+
+                         "&& globalTrack.isNonnull"+
+                         "&& globalTrack.normalizedChi2 < 10"+
+                         "&& globalTrack.hitPattern.numberOfValidMuonHits > 0"+
+                         "&& numberOfMatchedStations > 1"+
+                         "&& abs(innerTrack().dxy) < 0.2"+
+                         "&& abs(innerTrack().dz) < 0.5"+
+                         "&& innerTrack.hitPattern.numberOfValidPixelHits > 0"+
+                         "&& innerTrack.hitPattern.trackerLayersWithMeasurement > 5"+
+                         "&& (pfIsolationR04.sumChargedHadronPt+pfIsolationR04.sumNeutralHadronEt+pfIsolationR04.sumPhotonEt)/pt < 0.3"
+                         ),
+    filter = cms.bool(False)
     )
-
-# compared to w/z selection:
-# missing conversion veto,
-# isolation requirement not the same
-# missing hits requirement
 
 isoelectrons = cms.EDFilter(
     "GsfElectronSelector",
     src = cms.InputTag('gedGsfElectrons'),
     cut = cms.string(
-        "abs(eta) < 2.5 && pt > 9.5 && ecalDrivenSeed" +
+        "(abs(eta) < 2.5 && pt > 9.5 && ecalDrivenSeed" +
         "&& (isolationVariables03.tkSumPt)/et < 0.3 " +
         #barrel
         "&& ((abs(eta) < 1.4442 " +
@@ -36,8 +31,8 @@ isoelectrons = cms.EDFilter(
         "&& abs(deltaEtaSuperClusterTrackAtVtx)            < 0.008925 " +
         "&& hcalOverEcal                                   < 0.050537 " +
         "&& abs(1./superCluster.energy - 1./p)             < 0.091942 " +
-        "&& abs(dxy(vertex.position))                      < 0.012235 " + 
-        "&& abs(dz(vertex.position))                       < 0.042020) " + 
+        "&& abs(gsfTrack.dxy)                              < 0.012235 " +
+        "&& abs(gsfTrack.dz)                               < 0.042020) " +
         #endcap
         "|| (abs(eta)  > 1.566 "+
         "&& sigmaIetaIeta                                  < 0.030135 " +
@@ -45,11 +40,13 @@ isoelectrons = cms.EDFilter(
         "&& abs(deltaEtaSuperClusterTrackAtVtx)            < 0.007429 " +
         "&& hcalOverEcal                                   < 0.067778 " +
         "&& abs(1./superCluster.energy - 1./p)             < 0.098919 " +
-        "&& abs(dxy(vertex.position))                      < 0.027984 " + 
-        "&& abs(dz(vertex.position))                       < 0.133431))"
+        "&& abs(gsfTrack.dxy)                              < 0.027984 " +
+        "&& abs(gsfTrack.dz)                               < 0.133431)))"
         ),
     filter = cms.bool(False)
     )
+
+
 
 from RecoJets.Configuration.RecoPFJets_cff import kt6PFJets as dummy
 kt6PFJetsForRhoComputationVoronoiMet = dummy.clone(
