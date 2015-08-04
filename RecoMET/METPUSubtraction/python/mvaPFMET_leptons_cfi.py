@@ -4,16 +4,20 @@ import FWCore.ParameterSet.Config as cms
 isomuons = cms.EDFilter(
     "MuonSelector",
     src = cms.InputTag('muons'),
-    cut = cms.string(    "(isTrackerMuon) && abs(eta) < 2.5 && pt > 9.5"+#17. "+
-                         "&& globalTrack.isNonnull"+
-                         "&& globalTrack.normalizedChi2 < 10"+
-                         "&& globalTrack.hitPattern.numberOfValidMuonHits > 0"+
+    cut = cms.string(    "(isGlobalMuon) && abs(eta) < 2.4 && pt > 25"+#17. "+ cuts1&9
+                         "&& isPFMuon"+#cuts5
+                         "&& globalTrack.isNonnull"+#cuts5
+                         "&& innerTrack.hitPattern.numberOfValidPixelHits > 0"+#cuts6
+                         #"&& innerTrack.normalizedChi2 < 10"+#cuts7
+                         "&& globalTrack.normalizedChi2 < 10"+#cuts8
                          "&& numberOfMatchedStations > 1"+
-                         "&& abs(innerTrack().dxy) < 0.2"+
-                         "&& abs(innerTrack().dz) < 0.5"+
-                         "&& innerTrack.hitPattern.numberOfValidPixelHits > 0"+
-                         "&& innerTrack.hitPattern.trackerLayersWithMeasurement > 5"+
-                         "&& (pfIsolationR04.sumChargedHadronPt+pfIsolationR04.sumNeutralHadronEt+pfIsolationR04.sumPhotonEt)/pt < 0.3"
+                         "&& innerTrack.hitPattern.numberOfValidTrackerHits>5"+#cuts6
+                         "&& globalTrack.hitPattern.numberOfValidMuonHits>0"+#cuts6
+                         #"&& (pfIsolationR04.sumChargedHadronPt+pfIsolationR04.sumNeutralHadronEt+pfIsolationR04.sumPhotonEt)/pt < 0.3"+#cuts4
+                         "&&( (pfIsolationR04.sumChargedHadronPt+pfIsolationR04.sumNeutralHadronEt+pfIsolationR04.sumPhotonEt - 0.5*(pfIsolationR04.sumPUPt))/pt < 0.12"+
+                         "&& (pfIsolationR04.sumChargedHadronPt)/pt < 0.12)"+ #cuts10
+                         "&& abs(innerTrack().dxy)<0.2"#cuts2
+                         #"&& abs(muonBestTrack().dz) < 0.5" #cuts3 #?????? removed
                          ),
     filter = cms.bool(False)
     )
@@ -22,10 +26,13 @@ isoelectrons = cms.EDFilter(
     "GsfElectronSelector",
     src = cms.InputTag('gedGsfElectrons'),
     cut = cms.string(
-        "(abs(eta) < 2.5 && pt > 9.5 && ecalDrivenSeed" +
-        "&& (isolationVariables03.tkSumPt)/et < 0.3 " +
-        #barrel
-        "&& ((abs(eta) < 1.4442 " +
+        "abs(eta) < 2.5 && pt > 25" +
+        "&& ecalDrivenSeed" +
+        #"&& gsfTrack.hitPattern.numberOfHits == 0"   + #comment by steph
+        "&& (isolationVariables03.tkSumPt)/et              < 0.3"  +
+        "&& (abs(eta) < 1.4442 " +
+        "&& (pfIsolationVariables.sumChargedHadronPt+pfIsolationVariables.sumNeutralHadronEt+pfIsolationVariables.sumPhotonEt)/pt < 0.107587"  +
+        "&&(pfIsolationVariables.sumChargedHadronPt)/pt < 0.107587"+
         "&& sigmaIetaIeta                                  < 0.009996 " +
         "&& abs(deltaPhiSuperClusterTrackAtVtx)            < 0.035973 " +
         "&& abs(deltaEtaSuperClusterTrackAtVtx)            < 0.008925 " +
@@ -35,13 +42,15 @@ isoelectrons = cms.EDFilter(
         "&& abs(gsfTrack.dz)                               < 0.042020) " +
         #endcap
         "|| (abs(eta)  > 1.566 "+
+        "&& (pfIsolationVariables.sumChargedHadronPt+pfIsolationVariables.sumNeutralHadronEt+pfIsolationVariables.sumPhotonEt)/pt < 0.113254"  +
+        "&&(pfIsolationVariables.sumChargedHadronPt)/pt < 0.113254"+
         "&& sigmaIetaIeta                                  < 0.030135 " +
         "&& abs(deltaPhiSuperClusterTrackAtVtx)            < 0.067879 " +
         "&& abs(deltaEtaSuperClusterTrackAtVtx)            < 0.007429 " +
         "&& hcalOverEcal                                   < 0.067778 " +
         "&& abs(1./superCluster.energy - 1./p)             < 0.098919 " +
         "&& abs(gsfTrack.dxy)                              < 0.027984 " +
-        "&& abs(gsfTrack.dz)                               < 0.133431)))"
+        "&& abs(gsfTrack.dz)                               < 0.133431)"
         ),
     filter = cms.bool(False)
     )

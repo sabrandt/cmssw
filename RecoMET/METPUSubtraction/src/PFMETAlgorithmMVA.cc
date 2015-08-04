@@ -169,7 +169,6 @@ void PFMETAlgorithmMVA::setInput(const std::vector<reco::PUSubMETCandInfo>& lept
   reco::Candidate::LorentzVector jet1P4 = utils_.leadJetP4(jets_cleaned);
   reco::Candidate::LorentzVector jet2P4 = utils_.subleadJetP4(jets_cleaned);
 
-
   var_["particleFlow_U"]        = pfRecoil_data.met;
   var_["particleFlow_SumET"]    = pfRecoil_data.sumet;
   var_["particleFlow_UPhi"]     = pfRecoil_data.phi;
