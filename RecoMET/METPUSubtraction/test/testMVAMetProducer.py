@@ -7,14 +7,14 @@ process.load('Configuration.StandardSequences.Services_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 process.load('JetMETCorrections.Configuration.JetCorrectionProducers_cff')
-process.load('RecoMET.METPUSubtraction.mvaPFMET_cff')
+process.load('RecoMET.METPUSubtraction.mvaPFMET30_cff')
 
 # Other statements
 from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(20) )
-process.pfMVAMEt.minCorrJetPt = cms.double(30)
+#process.pfMVAMEt.minCorrJetPt = cms.double(30)
 
 process.source = cms.Source("PoolSource",
                             fileNames = cms.untracked.vstring(
@@ -29,6 +29,6 @@ process.output = cms.OutputModule("PoolOutputModule",
                                   fileName = cms.untracked.string("MVaTest.root")
 )       
 
-process.ana      = cms.Sequence(process.pfMVAMEtSequence)
+process.ana      = cms.Sequence(process.pfMVAMEt30Sequence)
 process.p        = cms.Path(process.ana)
 process.outpath  = cms.EndPath(process.output)
