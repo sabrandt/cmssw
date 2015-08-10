@@ -93,6 +93,7 @@ void PFMETProducerMVA::produce(edm::Event& evt, const edm::EventSetup& es)
   bool lHasPhotons = false;
   std::vector<reco::PUSubMETCandInfo> leptonInfo = computeLeptonInfo(srcLeptons_,*pfCandidates_view,hardScatterVertex, lId, lHasPhotons,
 								     evt);
+                                     
 
   // initialize MVA MET algorithm
   // (this will load the BDTs, stored as GBRForrest objects;
@@ -143,6 +144,13 @@ PFMETProducerMVA::computeLeptonInfo(const std::vector<edm::EDGetTokenT<reco::Can
 				    int& lId, bool& lHasPhotons, edm::Event& evt ) {
 
   std::vector<reco::PUSubMETCandInfo> leptonInfo;
+  reco::PUSubMETCandInfo leptonCand1;
+  reco::PUSubMETCandInfo leptonCand2;
+  double pt1hold = 0;
+  double pt2hold = 0;
+  bool hold1Photon = false;
+  bool hold2Photon = false;
+  
 
   for ( std::vector<edm::EDGetTokenT<reco::CandidateView > >::const_iterator srcLeptons_i = srcLeptons_.begin();
 	srcLeptons_i != srcLeptons_.end(); ++srcLeptons_i ) {
@@ -174,16 +182,37 @@ PFMETProducerMVA::computeLeptonInfo(const std::vector<edm::EDGetTokenT<reco::Can
       }
       if(pMatch) continue;
       reco::PUSubMETCandInfo pLeptonInfo;
-     // if(lepton1->pt() < 10 ) continue;
-//      std::cout << "hello i am lepton, pt =  " << lepton1->pt() << std::endl;
       pLeptonInfo.setP4( lepton1->p4() );
       pLeptonInfo.setChargedEnFrac( chargedEnFrac(&(*lepton1),pfCandidates_view,hardScatterVertex) );
-      leptonInfo.push_back(pLeptonInfo); 
-      if(lepton1->isPhoton()) { lHasPhotons = true; }
+    
+      if(lepton1->pt() > pt1hold){
+        leptonCand2 = leptonCand1;
+        leptonCand1 = pLeptonInfo;
+        pt2hold = pt1hold;
+        pt1hold = lepton1->pt();
+        hold2Photon = hold1Photon;
+        if(lepton1->isPhoton()) {
+          hold1Photon = true;
+        } else hold1Photon = false;
+      } else if(lepton1->pt() > pt2hold){
+        leptonCand2 = pLeptonInfo;
+        pt2hold = lepton1->pt();
+        if(lepton1->isPhoton()) {
+          hold1Photon = true;
+        } else hold1Photon = false;
+      }
+      lId++;
+     // if(lepton1->pt() < 10 ) continue;
+//       std::cout << "hello i am lepton, pt =  " << lepton1->pt() << std::endl;
+      //leptonInfo.push_back(pLeptonInfo); 
+      //if(lepton1->isPhoton()) { lHasPhotons = true; }
     }
-    lId++;
+    //lId++;
   }
- 
+  
+  if(hold1Photon || hold2Photon) {lHasPhotons = true;}
+  if(pt2hold > 0) leptonInfo.push_back(leptonCand2);
+  if(pt1hold > 0) leptonInfo.push_back(leptonCand1);
   return leptonInfo;
 }
 
@@ -223,25 +252,25 @@ PFMETProducerMVA::computeJetInfo(const reco::PFJetCollection& uncorrJets,
       jetInfo.setP4( corrJet->p4() );
       double lType1Corr = 0;
       if(useType1_) { //Compute the type 1 correction ===> This code is crap 
-	double pCorr = lCorrector->correction(*uncorrJet,iEvent,iSetup);
-	lType1Corr = std::abs(corrJet->pt()-pCorr*uncorrJet->pt());
-	TLorentzVector pVec; pVec.SetPtEtaPhiM(lType1Corr,0,corrJet->phi(),0); 
-	reco::Candidate::LorentzVector pType1Corr; pType1Corr.SetCoordinates(pVec.Px(),pVec.Py(),pVec.Pz(),pVec.E());
-	//Filter to leptons
-	bool pOnLepton = false;
-	for(unsigned int i0 = 0; i0 < iLeptons.size(); i0++) {
-	  if(deltaR2(iLeptons[i0].p4(),corrJet->p4()) < dR2Max) {pOnLepton = true; break;}
-	}	
- 	//Add it to PF Collection
-	if(corrJet->pt() > 10 && !pOnLepton) {
-	  reco::PUSubMETCandInfo pfCandidateInfo;
-	  pfCandidateInfo.setP4( pType1Corr );
-	  pfCandidateInfo.setDZ( -999 );
-	  iCands.push_back(pfCandidateInfo);
-	}
-	//Scale
-	lType1Corr = (pCorr*uncorrJet->pt()-uncorrJet->pt());
-	lType1Corr /=corrJet->pt();
+        double pCorr = lCorrector->correction(*uncorrJet,iEvent,iSetup);
+        lType1Corr = std::abs(corrJet->pt()-pCorr*uncorrJet->pt());
+        TLorentzVector pVec; pVec.SetPtEtaPhiM(lType1Corr,0,corrJet->phi(),0); 
+        reco::Candidate::LorentzVector pType1Corr; pType1Corr.SetCoordinates(pVec.Px(),pVec.Py(),pVec.Pz(),pVec.E());
+        //Filter to leptons
+        bool pOnLepton = false;
+        for(unsigned int i0 = 0; i0 < iLeptons.size(); i0++) {
+          if(deltaR2(iLeptons[i0].p4(),corrJet->p4()) < dR2Max) {pOnLepton = true; break;}
+        }	
+        //Add it to PF Collection
+        if(corrJet->pt() > 10 && !pOnLepton) {
+          reco::PUSubMETCandInfo pfCandidateInfo;
+          pfCandidateInfo.setP4( pType1Corr );
+          pfCandidateInfo.setDZ( -999 );
+          iCands.push_back(pfCandidateInfo);
+        }
+        //Scale
+        lType1Corr = (pCorr*uncorrJet->pt()-uncorrJet->pt());
+        lType1Corr /=corrJet->pt();
       }
       
       // check that jet Pt used to compute MVA based jet id. is above threshold
@@ -271,6 +300,8 @@ std::vector<reco::PUSubMETCandInfo> PFMETProducerMVA::computePFCandidateInfo(con
 	pfCandidate != pfCandidates.end(); ++pfCandidate ) {
     double dZ = -999.; // PH: If no vertex is reconstructed in the event
                        //     or PFCandidate has no track, set dZ to -999
+                       
+//     if(fabs(pfCandidate->eta()) > 3.0) continue;
     if ( hardScatterVertex ) {
       const reco::PFCandidate* pfc = dynamic_cast<const reco::PFCandidate* >( &(*pfCandidate) );
       if( pfc != nullptr ) { //PF candidate for RECO and PAT levels
