@@ -38,8 +38,7 @@ isoelectrons = cms.EDFilter(
         "&& abs(deltaEtaSuperClusterTrackAtVtx)            < 0.008925 " +
         "&& hcalOverEcal                                   < 0.050537 " +
         "&& abs(1./superCluster.energy - 1./p)             < 0.091942 " +
-        "&& abs(gsfTrack.dxy)                              < 0.012235 " +
-        "&& abs(gsfTrack.dz)                               < 0.042020) " +
+        "&& abs(gsfTrack.dxy)                              < 0.012235) " +
         #endcap
         "|| (abs(eta)  > 1.566 "+
         "&& (pfIsolationVariables.sumChargedHadronPt+pfIsolationVariables.sumNeutralHadronEt+pfIsolationVariables.sumPhotonEt)/pt < 0.113254"  +
@@ -49,8 +48,8 @@ isoelectrons = cms.EDFilter(
         "&& abs(deltaEtaSuperClusterTrackAtVtx)            < 0.007429 " +
         "&& hcalOverEcal                                   < 0.067778 " +
         "&& abs(1./superCluster.energy - 1./p)             < 0.098919 " +
-        "&& abs(gsfTrack.dxy)                              < 0.027984 " +
-        "&& abs(gsfTrack.dz)                               < 0.133431)"
+        "&& abs(gsfTrack.dxy)                              < 0.027984) " 
+        #"&& abs(gsfTrack.dz)                               < 0.133431)"
         ),
     filter = cms.bool(False)
     )
