@@ -70,10 +70,10 @@ pfMVAMEt = cms.EDProducer("PFMETProducerMVA",
     globalThreshold = cms.double(-1.),#pfMet.globalThreshold,
     minCorrJetPt = cms.double(-1.),
     inputFileNames = cms.PSet(
-        U     = cms.FileInPath('RecoMET/METPUSubtraction/data/my_training/gbru_7_4_X_miniAOD_50NS_July2015.root'),
-        DPhi  = cms.FileInPath('RecoMET/METPUSubtraction/data/my_training/gbrphi_7_4_X_miniAOD_50NS_July2015.root'),
-        CovU1 = cms.FileInPath('RecoMET/METPUSubtraction/data/my_training/gbru1cov_7_4_X_miniAOD_50NS_July2015.root'),
-        CovU2 = cms.FileInPath('RecoMET/METPUSubtraction/data/my_training/gbru2cov_7_4_X_miniAOD_50NS_July2015.root')
+        U     = cms.FileInPath('RecoMET/METPUSubtraction/data/my_training/RecoilCor_13TeV.root'),
+        DPhi  = cms.FileInPath('RecoMET/METPUSubtraction/data/my_training/PhiCor_13TeV.root'),
+        CovU1 = cms.FileInPath('RecoMET/METPUSubtraction/data/my_training/CovU1_13TeV.root'),
+        CovU2 = cms.FileInPath('RecoMET/METPUSubtraction/data/my_training/CovU2_13TeV.root')
         #U     = cms.FileInPath('RecoMET/METPUSubtraction/data/Max250_Weights/RecoilCor_13TeV_Unity.root'),
         #DPhi  = cms.FileInPath('RecoMET/METPUSubtraction/data/Max250_Weights/PhiCor_13TeV_Unity.root'),
         #CovU1 = cms.FileInPath('RecoMET/METPUSubtraction/data/Max250_Weights/CovU1_13TeV_Unity.root'),
@@ -100,7 +100,7 @@ pfMVAMEt = cms.EDProducer("PFMETProducerMVA",
 
 packedPFCandidates30 = cms.EDFilter("CandPtrSelector",
     src = cms.InputTag("particleFlow"),
-    cut = cms.string("abs(eta) < 3.0"))
+    cut = cms.string("abs(eta) < 3.0 && abs(pdgId)!=1 && abs(pdgId)!=2"))
 
 #process.AK4PFJetsPuppi30             = process.ak4PFJets.clone(src = cms.InputTag("puppi30"))
 pfMet30                      = pfMet.clone();

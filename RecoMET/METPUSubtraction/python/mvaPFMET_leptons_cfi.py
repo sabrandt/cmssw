@@ -1,59 +1,66 @@
 import FWCore.ParameterSet.Config as cms
 
-# Single muon for Wjets
 isomuons = cms.EDFilter(
     "MuonSelector",
     src = cms.InputTag('muons'),
-    cut = cms.string(    "(isGlobalMuon) && abs(eta) < 2.4 && pt > 25"+#17. "+ cuts1&9
-                         "&& isPFMuon"+#cuts5
-                         "&& globalTrack.isNonnull"+#cuts5
-                         "&& innerTrack.hitPattern.numberOfValidPixelHits > 0"+#cuts6
-                         #"&& innerTrack.normalizedChi2 < 10"+#cuts7
-                         "&& globalTrack.normalizedChi2 < 10"+#cuts8
-                         "&& numberOfMatchedStations > 1"+
-                         "&& innerTrack.hitPattern.numberOfValidTrackerHits>5"+#cuts6
-                         "&& globalTrack.hitPattern.numberOfValidMuonHits>0"+#cuts6
-                         #"&& (pfIsolationR04.sumChargedHadronPt+pfIsolationR04.sumNeutralHadronEt+pfIsolationR04.sumPhotonEt)/pt < 0.3"+#cuts4
-                         "&&( (pfIsolationR04.sumChargedHadronPt+pfIsolationR04.sumNeutralHadronEt+pfIsolationR04.sumPhotonEt - 0.5*(pfIsolationR04.sumPUPt))/pt < 0.12"+
-                         "&& (pfIsolationR04.sumChargedHadronPt)/pt < 0.12)"+ #cuts10
-                         "&& abs(innerTrack().dxy)<0.2"#cuts2
-                         #"&& abs(muonBestTrack().dz) < 0.5" #cuts3 #?????? removed
-                         ),
-    filter = cms.bool(False)
+    rho = cms.InputTag("fixedGridRhoFastjetAll"),
+    vertex = cms.InputTag("offlineSlimmedPrimaryVertices"),
+    charged_hadron_iso = cms.InputTag(''),
+    neutral_hadron_iso = cms.InputTag(''),
+    photon_iso = cms.InputTag(''),
+    typeID = cms.string("Tight"),
+    ptCut = cms.double(20),
+    etaCut = cms.double(2.4),
+    typeIso = cms.string("dBeta"),
+    relativeIsolationCut = cms.double(0.12),
+    #find the MiniAOD cuts for muons
+    cut = cms.string(    "(isGlobalMuon) && abs(eta) < 2.4 && pt > 20"+
+                         "&& isPFMuon"+
+                         "&& globalTrack.isNonnull"+#1
+                         "&& innerTrack.hitPattern.numberOfValidPixelHits > 0"+#1
+                         "&& globalTrack.normalizedChi2 < 10"+#1
+                         "&& numberOfMatchedStations > 1"+#2
+                         "&& innerTrack.hitPattern.numberOfValidTrackerHits>5"+#2
+                         "&& globalTrack.hitPattern.numberOfValidMuonHits>0"+#2
+                         "&&( (pfIsolationR04.sumChargedHadronPt+pfIsolationR04.sumNeutralHadronEt+pfIsolationR04.sumPhotonEt - 0.5*(pfIsolationR04.sumPUPt))/pt < 0.12"+#3
+                         "&& (pfIsolationR04.sumChargedHadronPt)/pt < 0.12)"+ #3
+                         "&& abs(innerTrack().dxy)<0.2"#3
+                         )
     )
-
+    
 isoelectrons = cms.EDFilter(
     "GsfElectronSelector",
     src = cms.InputTag('gedGsfElectrons'),
-    cut = cms.string(
-        "abs(eta) < 2.5 && pt > 25" +
-        "&& ecalDrivenSeed" +
-        #"&& gsfTrack.hitPattern.numberOfHits == 0"   + #comment by steph
-        "&& (isolationVariables03.tkSumPt)/et              < 0.3"  +
-        "&& (abs(eta) < 1.4442 " +
-        "&& (pfIsolationVariables.sumChargedHadronPt+pfIsolationVariables.sumNeutralHadronEt+pfIsolationVariables.sumPhotonEt)/pt < 0.107587"  +
-        "&&(pfIsolationVariables.sumChargedHadronPt)/pt < 0.107587"+
-        "&& sigmaIetaIeta                                  < 0.009996 " +
-        "&& abs(deltaPhiSuperClusterTrackAtVtx)            < 0.035973 " +
-        "&& abs(deltaEtaSuperClusterTrackAtVtx)            < 0.008925 " +
-        "&& hcalOverEcal                                   < 0.050537 " +
-        "&& abs(1./superCluster.energy - 1./p)             < 0.091942 " +
-        "&& abs(gsfTrack.dxy)                              < 0.012235) " +
-        #endcap
-        "|| (abs(eta)  > 1.566 "+
-        "&& (pfIsolationVariables.sumChargedHadronPt+pfIsolationVariables.sumNeutralHadronEt+pfIsolationVariables.sumPhotonEt)/pt < 0.113254"  +
-        "&&(pfIsolationVariables.sumChargedHadronPt)/pt < 0.113254"+
-        "&& sigmaIetaIeta                                  < 0.030135 " +
-        "&& abs(deltaPhiSuperClusterTrackAtVtx)            < 0.067879 " +
-        "&& abs(deltaEtaSuperClusterTrackAtVtx)            < 0.007429 " +
-        "&& hcalOverEcal                                   < 0.067778 " +
-        "&& abs(1./superCluster.energy - 1./p)             < 0.098919 " +
-        "&& abs(gsfTrack.dxy)                              < 0.027984) " 
-        #"&& abs(gsfTrack.dz)                               < 0.133431)"
-        ),
-    filter = cms.bool(False)
+    rho = cms.InputTag("fixedGridRhoFastjetAll"),
+    vertex = cms.InputTag("offlineSlimmedPrimaryVertices"),
+    charged_hadron_iso = cms.InputTag(''),
+    neutral_hadron_iso = cms.InputTag(''),
+    photon_iso = cms.InputTag(''),
+    typeID = cms.string("Tight"),
+    #ptCut = cms.double(10),
+    #etaCut = cms.double(2.5),
+    typeIso = cms.string("dBeta"),
+    relativeIsolationCut = cms.double(0.12),
+    cut = cms.string("abs(superCluster.eta)<2.5 && pt > 20"+#1
+                    "&& (abs(superCluster.eta) < 1.4442 " +#3
+                    "&&(pfIsolationVariables.sumChargedHadronPt)/pt < 0.107587"+#12
+                    #"&& sigmaIetaIeta                                  < 0.000 " + 
+                    "&& abs(deltaPhiSuperClusterTrackAtVtx)            < 0.035973 " +
+                    "&& abs(deltaEtaSuperClusterTrackAtVtx)            < 0.008925 " + 
+                    "&& hcalOverEcal                                   < 0.050537 " + 
+                    "&& abs(1./superCluster.energy - 1./p)             < 0.091942) " + 
+                    #endcap
+                    "|| (abs(superCluster.eta)  > 1.566 "+#3
+                    "&&(pfIsolationVariables.sumChargedHadronPt)/pt < 0.113254"+ 
+                    #"&& sigmaIetaIeta                                  < 0.00 " + 
+                    "&& abs(deltaPhiSuperClusterTrackAtVtx)            < 0.067879 " +
+                    "&& abs(deltaEtaSuperClusterTrackAtVtx)            < 0.007429 " +
+                    "&& hcalOverEcal                                   < 0.086782  " + 
+                    "&& abs(1./superCluster.energy - 1./p)             < 0.100683) "  
+    
+                    )
+    #filter = cms.bool(False)
     )
-
 
 
 from RecoJets.Configuration.RecoPFJets_cff import kt6PFJets as dummy
